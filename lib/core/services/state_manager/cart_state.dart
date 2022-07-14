@@ -23,4 +23,13 @@ abstract class _UpdateCart with Store {
   void addMultiItemToCart(List<CartModel> carts) {
     addedCartItem = carts as ObservableList<CartModel>;
   }
+
+  @action
+  int cartItemSum() {
+    int sum = 0;
+    for (CartModel cart in addedCartItem) {
+      sum += int.parse(cart.cartItemPrice);
+    }
+    return sum;
+  }
 }

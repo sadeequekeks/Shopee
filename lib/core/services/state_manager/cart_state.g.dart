@@ -62,6 +62,17 @@ mixin _$UpdateCart on _UpdateCart, Store {
   }
 
   @override
+  int cartItemSum() {
+    final _$actionInfo = _$_UpdateCartActionController.startAction(
+        name: '_UpdateCart.cartItemSum');
+    try {
+      return super.cartItemSum();
+    } finally {
+      _$_UpdateCartActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 addedCartItem: ${addedCartItem}
