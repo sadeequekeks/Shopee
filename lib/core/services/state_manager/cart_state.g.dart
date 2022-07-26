@@ -73,6 +73,17 @@ mixin _$UpdateCart on _UpdateCart, Store {
   }
 
   @override
+  void emptyList() {
+    final _$actionInfo = _$_UpdateCartActionController.startAction(
+        name: '_UpdateCart.emptyList');
+    try {
+      return super.emptyList();
+    } finally {
+      _$_UpdateCartActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 addedCartItem: ${addedCartItem}

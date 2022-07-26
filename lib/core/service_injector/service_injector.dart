@@ -6,6 +6,8 @@ class Serviceinjector {
   ProductService productService = ProductService();
   AuthService authService = AuthService();
   CartService cartService = CartService();
+  OrderService orderService = OrderService();
+  UtilityService utilityService = UtilityService();
 }
 
 Serviceinjector si = Serviceinjector();

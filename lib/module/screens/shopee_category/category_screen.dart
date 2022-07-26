@@ -158,7 +158,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               );
                             },
                             child: const PrimaryOutlinedButton(
-                              buttonTitle: 'View Details',
+                              buttonTitle: 'View',
                             ),
                           )
                         ],

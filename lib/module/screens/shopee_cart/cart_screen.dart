@@ -1,10 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shopee/core/helper/helper_functions.dart';
 import 'package:shopee/core/service_injector/service_injector.dart';
-import 'package:shopee/shared/data/models/cart_model.dart';
+import 'package:shopee/shared/data/models/product_model.dart';
 import 'package:shopee/shared/global/global_var.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../shared/data/models/order_model.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -21,6 +28,7 @@ class _CartScreenState extends State<CartScreen> {
     si.cartService.getAllCart(userID: userObj.user.id).then((value) {
       cartState.addMultiItemToCart(value);
     });
+    plugin.initialize(publicKey: publicKey);
     super.initState();
   }
 
@@ -28,6 +36,77 @@ class _CartScreenState extends State<CartScreen> {
   void dispose() {
     cartState.addedCartItem.clear();
     super.dispose();
+  }
+
+  var publicKey = 'pk_test_2361435992e926ef4b4a0a0a076f36d4aff4a0a9';
+  final plugin = PaystackPlugin();
+
+  String _getReference() {
+    var platform = (Platform.isAndroid) ? 'Android' : 'iOS';
+    final thisDate = DateTime.now().millisecondsSinceEpoch;
+    return 'ChargedFrom${platform}_$thisDate';
+  }
+
+  void _showMessage(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // add cart item to order list
+  void orderListtoDb() async {
+    List<OrderModel> ordereddd = [];
+    for (dynamic item in orderCart) {
+      OrderModel orderss = OrderModel(
+        userId: item.userId,
+        itemId: item.itemId,
+        itemImage: item.cartItemImage,
+        itemName: item.cartItemName,
+        itemQuantity: item.cartItemQuantity,
+        itemPrice: item.cartItemPrice,
+        dateOrdered: DateTime.now().toIso8601String(),
+        receiverName: '${userObj.user.firstname} ${userObj.user.lastname}',
+        receiverAddress: userObj.user.address,
+        receiverNo: userObj.user.telephone,
+        completed: "False",
+      );
+      ordereddd.add(orderss);
+    }
+    var _uri = Uri.parse('https://shoppeefy.herokuapp.com/api/orders/');
+    var res = await http.post(
+      _uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(ordereddd.map((e) => e.toMap()).toList()),
+    );
+    if (res.statusCode == 200) {
+      si.apiService.deleteRequest(
+          endpoint:
+              'https://shoppeefy.herokuapp.com/api/cart/clearcart/${userObj.user.id}');
+    }
+  }
+
+  chargeCard({
+    required int total,
+    required String name,
+  }) async {
+    var charge = Charge()
+      ..amount = total
+      ..reference = _getReference()
+      ..email = name;
+
+    CheckoutResponse response = await plugin.checkout(
+      context,
+      method: CheckoutMethod.card,
+      charge: charge,
+    );
+
+    if (response.status == true) {
+      orderListtoDb();
+      _showMessage('You\'ve successfully placed your order!');
+    } else {
+      _showMessage('Payment Failed!!!');
+    }
   }
 
   @override
@@ -49,6 +128,11 @@ class _CartScreenState extends State<CartScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.grey.shade700),
                 )),
+            // cartState.addedCartItem.isEmpty
+            //     ? const Center(
+            //         child: Text('No Items in Cart'),
+            //       )
+            //     :
             Observer(
               builder: (_) {
                 return Expanded(
@@ -58,6 +142,7 @@ class _CartScreenState extends State<CartScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       // CartModel cart = snapshot.data![index];
                       final item = cartState.addedCartItem[index];
+                      // cartObj = item;
                       return Stack(
                         children: <Widget>[
                           Container(
@@ -136,7 +221,7 @@ class _CartScreenState extends State<CartScreen> {
                                 color: Colors.amber,
                                 child: const Icon(
                                   Icons.clear,
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                                 onPressed: () {
                                   showDialog<String>(
@@ -182,97 +267,60 @@ class _CartScreenState extends State<CartScreen> {
                 );
               },
             ),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    "Shipping Fee      \$50",
-                    style:
-                        TextStyle(color: Colors.grey.shade700, fontSize: 16.0),
-                  ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
-                  Text(
-                    "Cart Subtotal     ${_helper.formattNumber(cartState.cartItemSum())}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18.0),
-                  ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: MaterialButton(
-                      height: 50.0,
-                      color: Colors.amber,
-                      child: Text(
-                        "Secure Checkout".toUpperCase(),
-                        style: const TextStyle(color: Colors.white),
+            FutureBuilder<List<ProductModel>>(
+                future: si.productService.getAllProducts(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: SpinKitThreeBounce(
+                        color: Colors.transparent,
+                        size: 50.0,
                       ),
-                      onPressed: () {},
+                    );
+                  }
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          "Shipping Fee      \$50",
+                          style: TextStyle(
+                              color: Colors.grey.shade700, fontSize: 16.0),
+                        ),
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          "Cart Subtotal     ${_helper.formattNumber(cartState.cartItemSum())}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18.0),
+                        ),
+                        const SizedBox(
+                          height: 20.0,
+                        ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: MaterialButton(
+                            height: 50.0,
+                            color: Colors.amber,
+                            child: Text(
+                              "Secure Checkout".toUpperCase(),
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            onPressed: () {
+                              chargeCard(
+                                total: cartState.cartItemSum() * 100,
+                                name: userObj.user.email,
+                              );
+                            },
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            ),
-
-            // FutureBuilder<int>(
-            //     future: si.cartService.getTotalCartAmount(),
-            //     builder: (context, snapshot) {
-            //       if (snapshot.connectionState == ConnectionState.waiting) {
-            //         return const Center(
-            //           child: SpinKitThreeBounce(
-            //             color: Colors.transparent,
-            //             size: 50.0,
-            //           ),
-            //         );
-            //       } else if (snapshot.hasData) {
-            //         return Container(
-            //           width: double.infinity,
-            //           padding: const EdgeInsets.all(20.0),
-            //           child: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.end,
-            //             children: <Widget>[
-            //               Text(
-            //                 "Shipping Fee      \$50",
-            //                 style: TextStyle(
-            //                     color: Colors.grey.shade700, fontSize: 16.0),
-            //               ),
-            //               const SizedBox(
-            //                 height: 10.0,
-            //               ),
-            //               Text(
-            //                 "Cart Subtotal     ${_helper.formattNumber(snapshot.data ?? 0)}",
-            //                 style: const TextStyle(
-            //                     fontWeight: FontWeight.bold, fontSize: 18.0),
-            //               ),
-            //               const SizedBox(
-            //                 height: 20.0,
-            //               ),
-            //               SizedBox(
-            //                 width: double.infinity,
-            //                 child: MaterialButton(
-            //                   height: 50.0,
-            //                   color: Colors.amber,
-            //                   child: Text(
-            //                     "Secure Checkout".toUpperCase(),
-            //                     style: const TextStyle(color: Colors.white),
-            //                   ),
-            //                   onPressed: () {},
-            //                 ),
-            //               )
-            //             ],
-            //           ),
-            //         );
-            //       } else {
-            //         return Container();
-            //       }
-            //     })
+                  );
+                }),
           ],
         ),
       ),

@@ -53,4 +53,22 @@ class ApiService {
 
     return apiResponse;
   }
+
+  Future<ApiResponseModel> postList(String endpoint,
+      {required dynamic body, required Map<String, String> headers}) async {
+    var _uri = Uri.parse(endpoint);
+    var res = await http.post(
+      _uri,
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    var apiResponse = ApiResponseModel(
+      body: res.body,
+      message: res.reasonPhrase,
+      statusCode: res.statusCode,
+    );
+    // print(apiResponse.toMap());
+    return apiResponse;
+  }
 }

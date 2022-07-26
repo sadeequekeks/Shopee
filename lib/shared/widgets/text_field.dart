@@ -30,6 +30,7 @@ class InputTextField extends StatelessWidget {
         // ),
         label: Text(labelText),
         prefixIcon: Icon(icon),
+
         hintText: hintText,
       ),
       maxLength: maxLength,

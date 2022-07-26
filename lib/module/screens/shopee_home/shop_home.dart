@@ -20,11 +20,11 @@ class _ShopeeHomeState extends State<ShopeeHome> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text(
-          'Shopee',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+        elevation: 0,
+        title: const Text('Shopee'),
+        titleTextStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
         ),
       ),
       body: Container(
@@ -148,7 +148,7 @@ class ShopCard extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: const PrimaryOutlinedButton(
-            buttonTitle: 'View Details',
+            buttonTitle: 'View',
           ),
         )
       ],

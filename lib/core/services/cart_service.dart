@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:shopee/core/service_injector/service_injector.dart';
 import 'package:shopee/shared/data/models/api_response_model.dart';
@@ -40,16 +39,7 @@ class CartService {
         var decodedData = jsonDecode(cartResponse.body);
         var payLoad = decodedData['message'];
         cartMessage = payLoad;
-        final cart = CartModel(
-            id: Random().nextDouble().toString(),
-            userId: userId,
-            itemId: itemId,
-            cartItemName: cartItemName,
-            cartItemPrice: cartItemPrice,
-            itemShippingPrice: itemShippingPrice,
-            cartItemQuantity: cartItemQuantity,
-            cartItemImage: cartItemImage,
-            v: 0);
+
         return cartMessage;
       } else {
         var data = jsonDecode(cartResponse.body);
@@ -66,6 +56,7 @@ class CartService {
 
   Future<List<CartModel>> getAllCart({required userID}) async {
     List<CartModel> carts = [];
+
     try {
       await si.apiService
           .getRequest(
@@ -84,11 +75,12 @@ class CartService {
               cartItemImage: item['cartItemImage'],
               v: item['__v'],
             );
+
             carts.add(cart);
             cartState.addtoCart(cart);
+            orderCart.add(cart);
           }
         } else {
-          print(value.body);
           carts = [];
         }
       });

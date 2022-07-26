@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shopee/core/service_injector/service_injector.dart';
+import 'package:shopee/module/screens/auth/login_screen.dart';
 import 'package:shopee/shared/global/global_var.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -12,6 +14,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.amber,
+        label: const Text('Log Out'),
+        icon: const Icon(Icons.logout),
+        onPressed: () {
+          si.routerService.popReplaceScreen(
+            context,
+            const LoginScreen(),
+          );
+        },
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: SizedBox(

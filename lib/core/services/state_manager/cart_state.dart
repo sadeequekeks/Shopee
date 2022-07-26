@@ -32,4 +32,9 @@ abstract class _UpdateCart with Store {
     }
     return sum;
   }
+
+  @action
+  void emptyList() {
+    addedCartItem.isEmpty;
+  }
 }
