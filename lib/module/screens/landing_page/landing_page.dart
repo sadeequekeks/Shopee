@@ -14,7 +14,8 @@ class LandingOnePage extends StatelessWidget {
             alignment: Alignment.center,
             child: const Image(
               image: NetworkImage(
-                  'https://startupjungle.com/wp-content/uploads/2017/02/cosmetic-products-3018845-1.jpg'),
+                'https://startupjungle.com/wp-content/uploads/2017/02/cosmetic-products-3018845-1.jpg',
+              ),
               fit: BoxFit.contain,
             ),
           ),

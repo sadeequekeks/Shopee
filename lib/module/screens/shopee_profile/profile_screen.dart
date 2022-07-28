@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:shopee/core/service_injector/service_injector.dart';
 import 'package:shopee/module/screens/auth/login_screen.dart';
+import 'package:shopee/module/screens/orders/orders_screen.dart';
 import 'package:shopee/shared/global/global_var.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -12,19 +14,61 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
+  void initState() {
+    si.orderService.getAllOrder();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    lateOrderList.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.amber,
-        label: const Text('Log Out'),
-        icon: const Icon(Icons.logout),
-        onPressed: () {
-          si.routerService.popReplaceScreen(
-            context,
-            const LoginScreen(),
-          );
-        },
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   backgroundColor: Colors.amber,
+      //   label: const Text('Log Out'),
+      //   icon: const Icon(Icons.logout),
+      //   onPressed: () {
+      //     si.routerService.popReplaceScreen(
+      //       context,
+      //       const LoginScreen(),
+      //     );
+      //   },
+      // ),
+      floatingActionButton: SpeedDial(icon: Icons.open_with, children: [
+        SpeedDialChild(
+          labelBackgroundColor: Colors.amber,
+          child: const Icon(
+            Icons.logout,
+            color: Colors.amber,
+          ),
+          label: 'Log Out',
+          onTap: () {
+            si.routerService.popReplaceScreen(
+              context,
+              const LoginScreen(),
+            );
+          },
+        ),
+        SpeedDialChild(
+          labelBackgroundColor: Colors.amber,
+          child: const Icon(
+            Icons.shopping_basket,
+            color: Colors.amber,
+          ),
+          label: 'My Orders',
+          onTap: () {
+            si.routerService.nextScreen(
+              context,
+              const MyOrders(),
+            );
+          },
+        ),
+      ]),
       body: SingleChildScrollView(
         child: SafeArea(
           child: SizedBox(

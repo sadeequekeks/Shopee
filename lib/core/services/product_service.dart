@@ -30,7 +30,6 @@ class ProductService {
             products.add(product);
           }
         } else {
-          print(value.body);
           products = [];
         }
       });

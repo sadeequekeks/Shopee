@@ -46,6 +46,7 @@ dependencies:
   hive_flutter: ^1.1.0
   modal_progress_hud_nsn: ^0.2.1
   cached_network_image: ^3.1.0
+  flutter_speed_dial: ^6.0.0
   flutter_paystack:
     git:
       url: https://github.com/definitelyme/flutter_paystack.git
