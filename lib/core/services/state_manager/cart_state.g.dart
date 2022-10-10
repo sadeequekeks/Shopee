@@ -25,6 +25,21 @@ mixin _$UpdateCart on _UpdateCart, Store {
     });
   }
 
+  late final _$sumAtom = Atom(name: '_UpdateCart.sum', context: context);
+
+  @override
+  int get sum {
+    _$sumAtom.reportRead();
+    return super.sum;
+  }
+
+  @override
+  set sum(int value) {
+    _$sumAtom.reportWrite(value, super.sum, () {
+      super.sum = value;
+    });
+  }
+
   late final _$_UpdateCartActionController =
       ActionController(name: '_UpdateCart', context: context);
 
@@ -86,7 +101,8 @@ mixin _$UpdateCart on _UpdateCart, Store {
   @override
   String toString() {
     return '''
-addedCartItem: ${addedCartItem}
+addedCartItem: ${addedCartItem},
+sum: ${sum}
     ''';
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shopee/module/screens/landing_page/landing_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

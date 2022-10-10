@@ -28,6 +28,7 @@ class _CartScreenState extends State<CartScreen> {
     si.cartService.getAllCart(userID: userObj.user.id).then((value) {
       cartState.addMultiItemToCart(value);
     });
+    cartState.cartItemSum();
     plugin.initialize(publicKey: publicKey);
     super.initState();
   }
@@ -278,6 +279,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     );
                   }
+
                   return Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20.0),

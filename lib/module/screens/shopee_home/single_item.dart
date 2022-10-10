@@ -51,7 +51,7 @@ class _SingleItemState extends State<SingleItem> {
                     ),
                   ]),
                 ),
-                Spacer(),
+                const Spacer(),
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
