@@ -9,6 +9,9 @@ abstract class _UpdateCart with Store {
   @observable
   ObservableList<CartModel> addedCartItem = ObservableList<CartModel>();
 
+  @observable
+  int sum = 0;
+
   @action
   void addtoCart(CartModel cartItems) {
     addedCartItem.add(cartItems);
@@ -21,7 +24,12 @@ abstract class _UpdateCart with Store {
 
   @action
   void addMultiItemToCart(List<CartModel> carts) {
-    addedCartItem = carts as ObservableList<CartModel>;
+    for (var element in carts) {
+      if (addedCartItem.contains(element)) {
+        return;
+      }
+      addedCartItem.addAll(carts);
+    }
   }
 
   @action

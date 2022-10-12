@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:shopee/core/service_injector/service_injector.dart';
 import 'package:shopee/shared/data/models/all_order_model.dart';
 import 'package:shopee/shared/data/models/api_response_model.dart';
-import 'package:shopee/shared/data/models/order_model.dart';
 import 'package:shopee/shared/global/global_var.dart';
 
 class OrderService {
