@@ -279,7 +279,6 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                     );
                   }
-
                   return Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20.0),

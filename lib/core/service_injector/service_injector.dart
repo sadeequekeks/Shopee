@@ -8,6 +8,7 @@ class Serviceinjector {
   CartService cartService = CartService();
   OrderService orderService = OrderService();
   UtilityService utilityService = UtilityService();
+  PersistentStorage persistentStorage = PersistentStorage();
 }
 
 Serviceinjector si = Serviceinjector();

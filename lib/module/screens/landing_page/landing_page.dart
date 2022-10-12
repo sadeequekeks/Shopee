@@ -80,11 +80,13 @@ class LandingOnePage extends StatelessWidget {
                   color: Colors.amber,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(40.0)),
-                  onPressed: () {
+                  onPressed: () async {
                     si.routerService.popReplaceScreen(
                       context,
                       const LoginScreen(),
                     );
+                    await si.persistentStorage.addBoolToSharedPreference(
+                        key: 'appState', value: true);
                   },
                   child: const Text(
                     "Get Started",

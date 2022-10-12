@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shopee/module/screens/landing_page/landing_page.dart';
+import 'package:shopee/module/screens/landing_page/splash_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      home: const LandingOnePage(),
+      home: const SplashScreen(),
     );
   }
 }
